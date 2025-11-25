@@ -1,0 +1,32 @@
+<?php
+// modules/Finance/Database/Migrations/2024_01_01_000010_create_user_notification_settings_table.php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('user_notification_settings', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('type'); // notification type
+            $table->boolean('email_enabled')->default(true);
+            $table->boolean('push_enabled')->default(true);
+            $table->boolean('in_app_enabled')->default(true);
+            $table->json('channels')->nullable(); // Additional channel settings
+            $table->timestamps();
+
+            $table->unique(['user_id', 'type']);
+            $table->index('user_id');
+            $table->index('type');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('user_notification_settings');
+    }
+};
